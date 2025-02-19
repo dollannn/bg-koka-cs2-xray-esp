@@ -1,11 +1,10 @@
 ﻿using CounterStrikeSharp.API;
 using CounterStrikeSharp.API.Core;
-using CounterStrikeSharp.API.Modules.Commands;
-using CounterStrikeSharp.API.Modules.Commands.Targeting;
 using CounterStrikeSharp.API.Modules.Utils;
 
-namespace AdminESP;
-public partial class AdminESP {
+namespace CheatESP;
+public partial class CheatESP
+{
 
     public enum PrintTo
     {
@@ -76,5 +75,5 @@ public partial class AdminESP {
 
         return input;
     }
-    
+
 }

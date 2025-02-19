@@ -3,11 +3,11 @@ using CounterStrikeSharp.API.Core;
 using CounterStrikeSharp.API.Modules.Entities;
 using CounterStrikeSharp.API.Modules.Utils;
 
-namespace AdminESP;
+namespace CheatESP;
 
-public partial class AdminESP
+public partial class CheatESP
 {
-    
+
     private void RegisterListeners()
     {
 
@@ -21,7 +21,7 @@ public partial class AdminESP
         RegisterEventHandler<EventPlayerSpawn>(OnPlayerSpawn, HookMode.Pre);
         RegisterEventHandler<EventPlayerDeath>(OnPlayerDeath);
         RegisterEventHandler<EventRoundStart>(OnRoundStart);
-        
+
     }
 
     private void DeregisterListeners()
@@ -44,22 +44,22 @@ public partial class AdminESP
     {
 
         var player = Utilities.GetPlayerFromSlot(slot);
-        if(player == null || player.IsValid is not true) return;
+        if (player == null || player.IsValid is not true) return;
 
         if (cachedPlayers.Contains(player) is not true)
             cachedPlayers.Add(player);
-        
+
     }
 
     private void OnClientConnected(int slot)
     {
 
         var player = Utilities.GetPlayerFromSlot(slot);
-        if(player == null || player.IsValid is not true) return;
+        if (player == null || player.IsValid is not true) return;
 
         if (cachedPlayers.Contains(player) is not true)
             cachedPlayers.Add(player);
-        
+
     }
 
     private void OnClientPutInServer(int slot)
@@ -69,7 +69,7 @@ public partial class AdminESP
 
         if (cachedPlayers.Contains(player) is not true)
             cachedPlayers.Add(player);
-        
+
     }
 
     private void CheckTransmitListener(CCheckTransmitInfoList infoList)
@@ -81,16 +81,19 @@ public partial class AdminESP
             if (player is null || player.IsValid is not true) continue;
 
             //itereate cached players
-            for (int i = 0; i < cachedPlayers.Count(); i++) {
-                
+            for (int i = 0; i < cachedPlayers.Count(); i++)
+            {
+
                 //leave self's observerPawn so it can spectate and check if feature is enabled
                 //we are clearing the whole spectator list as it doesn't work relaibly per person basis
-                if (Config.HideAdminSpectators is true) {
+                if (Config.HideAdminSpectators is true)
+                {
 
                     if (cachedPlayers[i] is null || cachedPlayers[i].IsValid is not true) continue;
 
                     //check if it 'us' in the current context and do the magic only if it's not
-                    if (cachedPlayers[i].Slot != player.Slot) {
+                    if (cachedPlayers[i].Slot != player.Slot)
+                    {
 
                         //get the target's pawn
                         var targetPawn = cachedPlayers[i].PlayerPawn.Value;
@@ -98,7 +101,7 @@ public partial class AdminESP
 
                         //get the target's observerpawn 
                         var targetObserverPawn = cachedPlayers[i].ObserverPawn.Value;
-                        if (targetObserverPawn is null 
+                        if (targetObserverPawn is null
                         || targetObserverPawn.IsValid is not true) continue;
 
                         //we clear the spec list via clearing all of the observerTarget' pawns indexes 
@@ -111,13 +114,14 @@ public partial class AdminESP
                 //check if admin has enabled ESP 
                 if (toggleAdminESP[player.Slot] == true)
                     continue;
-                    
+
                 //stop transmitting any entity from the glowingPlayers list
                 foreach (var glowingProp in glowingPlayers)
                 {
 
                     if (glowingProp.Value.Item1 is not null && glowingProp.Value.Item1.IsValid is true
-                    && glowingProp.Value.Item2 is not null && glowingProp.Value.Item2.IsValid is true) {
+                    && glowingProp.Value.Item2 is not null && glowingProp.Value.Item2.IsValid is true)
+                    {
 
                         //prop one
                         info.TransmitEntities.Remove((int)glowingProp.Value.Item1.Index);
@@ -130,21 +134,22 @@ public partial class AdminESP
             }
         }
 
-       
+
     }
 
     public HookResult OnPlayerSpawn(EventPlayerSpawn @event, GameEventInfo info)
     {
         var player = @event.Userid;
 
-        if (player is null 
-        || player.IsValid is not true 
+        if (player is null
+        || player.IsValid is not true
         || player.Connected is not PlayerConnectedState.PlayerConnected) return HookResult.Continue;
 
-        AddTimer(2f, () => {
+        AddTimer(2f, () =>
+        {
 
-            if (player is null 
-            || player.IsValid is not true 
+            if (player is null
+            || player.IsValid is not true
             || player.Connected is not PlayerConnectedState.PlayerConnected) return;
 
             //force hiding the glowing props no matter what upon spawn(this is mostly ignored on the first spawn of the round)
@@ -157,13 +162,14 @@ public partial class AdminESP
     public HookResult OnRoundStart(EventRoundStart @event, GameEventInfo info)
     {
 
-        for (int i = 0; i < cachedPlayers.Count(); i++) {
+        for (int i = 0; i < cachedPlayers.Count(); i++)
+        {
 
             if (cachedPlayers[i] is null || cachedPlayers[i].IsValid is not true) continue;
 
-            if (toggleAdminESP[cachedPlayers[i].Slot] is true && cachedPlayers[i].Team is CsTeam.Spectator && Config.SkipSpectatingEsps is true) 
+            if (toggleAdminESP[cachedPlayers[i].Slot] is true && cachedPlayers[i].Team is CsTeam.Spectator && Config.SkipSpectatingEsps is true)
                 continue;
-            
+
             toggleAdminESP[cachedPlayers[i].Slot] = false;
 
         }
@@ -172,10 +178,12 @@ public partial class AdminESP
             togglePlayersGlowing = false;
 
         //check if there are espering admins and if SkipSpectatingEsps is true, to restore the glowing props
-        Server.NextFrame(() => {
+        Server.NextFrame(() =>
+        {
 
             //remove props if there isn't any espering admin/s
-            if (AreThereEsperingAdmins() is false) {
+            if (AreThereEsperingAdmins() is false)
+            {
 
                 RemoveAllGlowingPlayers();
                 return;
@@ -194,16 +202,18 @@ public partial class AdminESP
     {
         var player = @event.Userid;
 
-        if (player is null 
-        || player.IsValid is not true 
+        if (player is null
+        || player.IsValid is not true
         || player.Connected is not PlayerConnectedState.PlayerConnected) return HookResult.Continue;
 
         //remove glowing prop if player has one upon death
-        if (glowingPlayers.ContainsKey(player.Slot) is true) {
+        if (glowingPlayers.ContainsKey(player.Slot) is true)
+        {
 
             if (glowingPlayers[player.Slot].Item1 is not null && glowingPlayers[player.Slot].Item1.IsValid is true
-            && glowingPlayers[player.Slot].Item2 is not null && glowingPlayers[player.Slot].Item2.IsValid is true) {
-                
+            && glowingPlayers[player.Slot].Item2 is not null && glowingPlayers[player.Slot].Item2.IsValid is true)
+            {
+
                 //remove previous modelRelay prop
                 glowingPlayers[player.Slot].Item1.AcceptInput("Kill");
                 //remove previous modelGlow prop
@@ -231,7 +241,7 @@ public partial class AdminESP
         //remove player from cached list
         if (cachedPlayers.Contains(player) is true)
             cachedPlayers.Remove(player);
-        
+
     }
 
 

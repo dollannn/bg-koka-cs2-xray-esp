@@ -2,19 +2,21 @@
 using CounterStrikeSharp.API;
 using CounterStrikeSharp.API.Core;
 
-namespace AdminESP;
+namespace CheatESP;
 
-public partial class AdminESP
+public partial class CheatESP
 {
-   
-    public Dictionary</*player slot*/int, 
+
+    public Dictionary</*player slot*/int,
                     Tuple</*prop 1*/CBaseModelEntity, /*prop 2*/CBaseModelEntity>> glowingPlayers = new();
 
     public List<CCSPlayerController> cachedPlayers = new();
 
-    public void SetAllPlayersGlowing() {
+    public void SetAllPlayersGlowing()
+    {
 
-        for (int i = 0; i < cachedPlayers.Count(); i++) {
+        for (int i = 0; i < cachedPlayers.Count(); i++)
+        {
 
             //skip invalid and dead players when assigning prop
             if (cachedPlayers[i] is null || cachedPlayers[i].IsValid is not true || cachedPlayers[i].PawnIsAlive is not true) continue;
@@ -27,13 +29,15 @@ public partial class AdminESP
 
     }
 
-    public void RemoveAllGlowingPlayers() {
+    public void RemoveAllGlowingPlayers()
+    {
 
         foreach (var glowingProp in glowingPlayers.Values)
         {
-           if (glowingProp.Item1 is not null && glowingProp.Item1.IsValid is true
-            && glowingProp.Item2 is not null && glowingProp.Item2.IsValid is true) {
-                
+            if (glowingProp.Item1 is not null && glowingProp.Item1.IsValid is true
+             && glowingProp.Item2 is not null && glowingProp.Item2.IsValid is true)
+            {
+
                 //remove previous modelRelay prop
                 glowingProp.Item1.AcceptInput("Kill");
                 //remove previous modelGlow prop
@@ -45,12 +49,13 @@ public partial class AdminESP
 
     }
 
-    public bool AreThereEsperingAdmins() {
+    public bool AreThereEsperingAdmins()
+    {
 
         foreach (var toggledAdminESP in toggleAdminESP)
             if (toggledAdminESP is true)
                 return true;
-            
+
         return false;
 
     }
@@ -58,7 +63,7 @@ public partial class AdminESP
     public void SetPlayerGlowing(CCSPlayerController player, int team)
     {
 
-        if (player is null || player.IsValid is not true 
+        if (player is null || player.IsValid is not true
         || player.Connected is not PlayerConnectedState.PlayerConnected) return;
 
         var playerPawn = player.PlayerPawn.Value;
@@ -67,7 +72,7 @@ public partial class AdminESP
         CBaseModelEntity? modelGlow = Utilities.CreateEntityByName<CBaseModelEntity>("prop_dynamic");
         CBaseModelEntity? modelRelay = Utilities.CreateEntityByName<CBaseModelEntity>("prop_dynamic");
 
-        if (modelGlow is null || modelRelay is null  
+        if (modelGlow is null || modelRelay is null
         || modelGlow.IsValid is not true || modelRelay.IsValid is not true) return;
 
         var playerCBodyComponent = playerPawn.CBodyComponent;
@@ -87,15 +92,16 @@ public partial class AdminESP
         modelGlow.Spawnflags = 256u;
         modelGlow.DispatchSpawn();
 
-        switch (team) {
+        switch (team)
+        {
             case 2:
                 modelGlow.Glow.GlowColorOverride = Color.Orange; //T
-            break;
+                break;
             case 3:
                 modelGlow.Glow.GlowColorOverride = Color.SkyBlue; //CT
-            break;
+                break;
         }
-        
+
         modelGlow.Glow.GlowRange = 5000;
         modelGlow.Glow.GlowTeam = -1;
         modelGlow.Glow.GlowType = 3;
@@ -105,11 +111,13 @@ public partial class AdminESP
         modelGlow.AcceptInput("FollowEntity", modelRelay, modelGlow, "!activator");
 
         //if player already has glowing metadata remove previous one before adding new one
-        if (glowingPlayers.ContainsKey(player.Slot) is true) {
+        if (glowingPlayers.ContainsKey(player.Slot) is true)
+        {
 
             if (glowingPlayers[player.Slot].Item1 is not null && glowingPlayers[player.Slot].Item1.IsValid is true
-            && glowingPlayers[player.Slot].Item2 is not null && glowingPlayers[player.Slot].Item2.IsValid is true) {
-                
+            && glowingPlayers[player.Slot].Item2 is not null && glowingPlayers[player.Slot].Item2.IsValid is true)
+            {
+
                 //remove previous modelRelay prop
                 glowingPlayers[player.Slot].Item1.AcceptInput("Kill");
                 //remove previous modelGlow prop
@@ -121,7 +129,7 @@ public partial class AdminESP
         }
 
         //add player to the list
-        glowingPlayers.Add(player.Slot, new Tuple<CBaseModelEntity, CBaseModelEntity>(modelRelay,modelGlow));
+        glowingPlayers.Add(player.Slot, new Tuple<CBaseModelEntity, CBaseModelEntity>(modelRelay, modelGlow));
 
     }
 
