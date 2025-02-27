@@ -167,7 +167,7 @@ public partial class CheatESP
 
             if (cachedPlayers[i] is null || cachedPlayers[i].IsValid is not true) continue;
 
-            if (toggleAdminESP[cachedPlayers[i].Slot] is true && cachedPlayers[i].Team is CsTeam.Spectator && Config.SkipSpectatingEsps is true)
+            if (toggleAdminESP[cachedPlayers[i].Slot] is true && cachedPlayers[i].Team is CsTeam.Spectator)
                 continue;
 
             toggleAdminESP[cachedPlayers[i].Slot] = false;
@@ -177,7 +177,7 @@ public partial class CheatESP
         if (togglePlayersGlowing is true)
             togglePlayersGlowing = false;
 
-        //check if there are espering admins and if SkipSpectatingEsps is true, to restore the glowing props
+        //check if there are espering admins to restore the glowing props
         Server.NextFrame(() =>
         {
 
@@ -189,8 +189,8 @@ public partial class CheatESP
                 return;
             }
 
-            //respawn the glowing props if there are espering admins and SkipSpectatingEsps is true
-            if (AreThereEsperingAdmins() is true && Config.SkipSpectatingEsps is true)
+            //respawn the glowing props if there are espering admins
+            if (AreThereEsperingAdmins() is true)
                 SetAllPlayersGlowing();
 
         });

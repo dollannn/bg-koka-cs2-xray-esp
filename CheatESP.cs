@@ -12,7 +12,7 @@ public sealed partial class CheatESP : BasePlugin, IPluginConfig<Config>
 {
     public override string ModuleName => "Cheat ESP";
     public override string ModuleAuthor => "AquaVadis & dollan";
-    public override string ModuleVersion => "1.1.1s";
+    public override string ModuleVersion => "1.0.0";
     public override string ModuleDescription => "Plugin uses code borrowed from CS2Fixes / cs2kz-metamod / hl2sdk / unknown cheats and xstage from CS# discord";
 
     public bool[] toggleAdminESP = new bool[64];
